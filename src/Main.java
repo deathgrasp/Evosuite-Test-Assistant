@@ -114,10 +114,10 @@ public class Main {
 
                 gs = "";
                 for (int j = 0; j < 3; j++) {
+                    iteration++;
                     generateDynamicTimesMath();
                     print("test " + testNumber + " iteration " + iteration + " completed");
                     exec("cp -r evosuite-tests evosuite-tests_" + pname + "_" + testNumber + "_" + iteration); //copy test directory in case we want to take a look
-                    iteration++;
                 }
                 countBugs(); //used to print the last iteration
                 testNumber++;
@@ -132,7 +132,6 @@ public class Main {
         prevMap = map;
         errCount.clear();
         map.clear();
-        timeAllocated.clear();
 
         countBugs(); //used to print the found data, and to populate the database
 
@@ -146,6 +145,8 @@ public class Main {
             errCount.remove(s);
         }
         totalTime = 0;
+        timeAllocated.clear();
+
         createDynamicTest(path);
         print("executing");
         exec(gs.trim().split("\n"));
@@ -367,9 +368,8 @@ public class Main {
     public static void getFileTests() {
         numberOfException = 0;
         numberOfFiles = 0;
-        String directoryName = path;
-        IsBuggy(directoryName);
-        createTest(directoryName);
+        IsBuggy(path);
+        createTest(path);
     }
 
     private static void IsBuggy(File file) {
@@ -535,8 +535,9 @@ parse the evosuite tests. inserts relevant data to the file structers for later 
                             boolean hadException = false;
                             if (!file.getName().contains("$")) {
                                 hadException = prevMap.containsKey(file.getAbsolutePath());
-                                if (timeAllocated.containsKey(name))
+                                if (timeAllocated.containsKey(name)){
                                     allocated = timeAllocated.get(name);
+                                }
                             }
                             if (!Trim(error)) {
                                 gs += testNumber + "," + iteration + "," + file.getAbsolutePath() + ", " + file.getName() + ", " + error + ", " + errorSource + "," + allocated + "," + hadException + ", " + errorText + "\n";
