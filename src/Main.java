@@ -1,13 +1,7 @@
-import javax.naming.Name;
-import javax.xml.ws.spi.Invoker;
-import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 
@@ -539,7 +533,7 @@ parse the evosuite tests. inserts relevant data to the file structers for later 
                                     allocated = timeAllocated.get(name);
                                 }
                             }
-                            if (!Trim(error)) {
+                            if (!RemoveNoneBugException(error)) {
                                 gs += testNumber + "," + iteration + "," + file.getAbsolutePath() + ", " + file.getName() + ", " + error + ", " + errorSource + "," + allocated + "," + hadException + ", " + errorText + "\n";
                                 errCount.put(filename, errCount.get(filename) + 1);
                             }
@@ -561,7 +555,7 @@ parse the evosuite tests. inserts relevant data to the file structers for later 
         }
     }
 
-    private static boolean Trim(String error) {
+    private static boolean RemoveNoneBugException(String error) {
         return error.toLowerCase().contains("evosuite");
     }
 
@@ -634,10 +628,13 @@ parse the evosuite tests. inserts relevant data to the file structers for later 
             p.waitFor();
 //            executeCommands();
         } catch (Exception e) {
-            System.out.print("failed");
+            System.out.print("\n\n\n failed! exception: " +e+"\n\n\n");
         } finally {
             if (p != null)
                 p.destroy();
+            else {
+                print("failed to destroy the a process, as it was already null.");
+            }
         }
     }
 
