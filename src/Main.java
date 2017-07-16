@@ -32,6 +32,9 @@ public class Main {
     static String path = "";
     static String classesStartIn = "";
 
+    enum doOnFiles{ //used to call correct function when running on all files
+        CREATEDYNAMICTEST, ONLYEXCEPTION, CREATETEST, CHECKISBUGGY
+    }
     //returns false if a bad string is received
     public static boolean setProject(String s) {
         String error = "Can't find a project with the name " + s + ". Please enter a valid one from the list:\n";
@@ -49,7 +52,7 @@ public class Main {
         } else if (s.equals("Chart")) {
             pname = "Chart";
             path = "Chart10b/jfreechart-1.2.0-pre1";
-            checkOneIn = 1;
+            checkOneIn = 6;
             directoryName = "evosuite-tests/";
             classesStartIn = "org";
         } else if (s.equals("Time")) {
@@ -140,8 +143,7 @@ public class Main {
         }
         totalTime = 0;
         timeAllocated.clear();
-
-        createDynamicTest(path);
+        DoOnAllFiles(path,doOnFiles.CREATEDYNAMICTEST);
         print("executing");
         exec(gs.trim().split("\n"));
         String fileToWrite = "runme" + pname + "Weighted_Base" + testNumber + "_" + iteration;
@@ -188,81 +190,42 @@ public class Main {
     }
 
     //TODO: combine the following functions to be a function getting an arguement and acts on all of it
-    public static void createDynamicTest(String directoryName) {
+    public static void DoOnAllFiles(String directoryName, doOnFiles func) {
         File directory = new File(directoryName);
         // get all the files from a directory
         File[] fList = directory.listFiles();
-
+        int counter=0;
         for (File file : fList) {
             if (file.isFile() && file.getAbsolutePath().contains(".java") || file.getAbsolutePath().contains(".class")) {
 //                onlyExceptions(file);
-                createDynamicTestEvoRunner(file);
-
-            } else if (file.isDirectory()) {
-                createDynamicTest(file.getAbsolutePath());
-            }
-        }
-    }
-
-    public static void listf(String directoryName) {
-        File directory = new File(directoryName);
-        // get all the files from a directory
-        File[] fList = directory.listFiles();
-        for (File file : fList) {
-            if (file.isFile() && file.getAbsolutePath().contains(".java") || file.getAbsolutePath().contains(".class")) {
-                onlyExceptions(file);
-                //createTestEvoRunner(file);
-            } else if (file.isDirectory()) {
-                listf(file.getAbsolutePath());
-            }
-        }
-    }
-
-    public static void createTest(String directoryName) {
-        File directory = new File(directoryName);
-
-        // get all the files from a directory
-        File[] fList = directory.listFiles();
-        int counter = 0;
-
-
-        for (File file : fList) {
-            if (file.isFile() && file.getAbsolutePath().contains(".java") || file.getAbsolutePath().contains(".class")) {
-//                onlyExceptions(file);
-                if (counter == 0) {
-                    createTestEvoRunner(file);
-                    counter = checkOneIn;
+                switch (func){
+                    case CREATETEST:
+                        if (counter == 0) {
+                            createTestEvoRunner(file);
+                            counter = checkOneIn;
+                        }
+                        break;
+                    case CHECKISBUGGY:
+                        if (counter == 0) {
+                            IsBuggy(file);
+                            counter = checkOneIn;
+                        }
+                        break;
+                    case ONLYEXCEPTION:
+                        onlyExceptions(file);
+                        break;
+                    case CREATEDYNAMICTEST:
+                        createDynamicTestEvoRunner(file);
+                        break;
                 }
-                //createBalancedEvoRunner(file);
-
                 counter--;
             } else if (file.isDirectory()) {
-                createTest(file.getAbsolutePath());
+                DoOnAllFiles(file.getAbsolutePath(), func);
+
             }
         }
     }
 
-    private static void IsBuggy(String directoryName) {
-        File directory = new File(directoryName);
-
-        // get all the files from a directory
-        File[] fList = directory.listFiles();
-        int counter = 0;
-
-        for (File file : fList) {
-            if (file.isFile() && file.getAbsolutePath().contains(".java") || file.getAbsolutePath().contains(".class")) {
-//                onlyExceptions(file);
-                if (counter == 0) {
-                    IsBuggy(file);
-                    counter = checkOneIn;
-                }
-                //createBalancedEvoRunner(file);
-                counter--;
-            } else if (file.isDirectory()) {
-                IsBuggy(file.getAbsolutePath());
-            }
-        }
-    }
 
     private static void createDynamicTestEvoRunner(File file) {
         if (file.getName().contains("$")) return;
@@ -324,7 +287,7 @@ public class Main {
 
     public static void countBugs() {
         gs = "";
-        listf(directoryName);
+        DoOnAllFiles(directoryName, doOnFiles.ONLYEXCEPTION);
         String content = "Test Number, Iteration, Full path, Test file, Exception, Throwing class, AllocatedTime, HadException, Error message\n" + gs;
         String fileToWrite = pname + "_" + testNumber + "_" + iteration + ".csv";
         writeFile(fileToWrite, content);
@@ -362,8 +325,8 @@ public class Main {
     public static void getFileTests() {
         numberOfException = 0;
         numberOfFiles = 0;
-        IsBuggy(path);
-        createTest(path);
+        DoOnAllFiles(path,doOnFiles.CHECKISBUGGY);
+        DoOnAllFiles(path,doOnFiles.CREATETEST);
     }
 
     private static void IsBuggy(File file) {
