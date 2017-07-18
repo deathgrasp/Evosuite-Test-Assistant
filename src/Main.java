@@ -123,6 +123,7 @@ public class Main {
         print("finished running");
     }
 
+    //print the current state of the tests, and run createDynamicTestEvoRunner on all files
     public static void generateDynamicTimesMath() {
         //reset data from previous iterations
         prevErrCount = errCount;
@@ -154,42 +155,7 @@ public class Main {
         writeFile(fileToWrite, content);*/
     }
 
-    private static void writeFile(String fname, String content) {
-        BufferedWriter bw = null;
-        FileWriter fw = null;
-
-        try {
-
-            //fw = new FileWriter("C:\\Users\\rel\\workspace\\evotrimmer\\Exceptions.csv");
-            fw = new FileWriter(fname);
-            bw = new BufferedWriter(fw);
-            bw.write(content);
-            System.out.println("Done");
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        } finally {
-
-            try {
-
-                if (bw != null)
-                    bw.close();
-
-                if (fw != null)
-                    fw.close();
-
-            } catch (IOException ex) {
-
-                ex.printStackTrace();
-
-            }
-
-        }
-    }
-
-    //TODO: combine the following functions to be a function getting an arguement and acts on all of it
+    //gets a directory and an enum for function. according to the enum, use a function on all the java/class files in the directory
     public static void DoOnAllFiles(String directoryName, doOnFiles func) {
         File directory = new File(directoryName);
         // get all the files from a directory
@@ -225,8 +191,12 @@ public class Main {
             }
         }
     }
-
-
+/*
+    used to populate the string 'gs' with tests.
+    time for each test is based on the results from the previous iteration, so that files where we found exceptions get more time.
+    if 'staticDynamic' is true, then each test will get the basetime for each test, with additional time.
+    if 'staticDynamic' is false, the total time for the project is fixed, and files where we found exceptions gets more time.
+ */
     private static void createDynamicTestEvoRunner(File file) {
         if (file.getName().contains("$")) return;
         String name = file.getName().substring(0, file.getName().length() - ".class".length());
@@ -241,18 +211,14 @@ public class Main {
             if (errCount.get(s) > 0)
                 numberOfFilesWithExceptions += 1;
         }
-//        float weightPerExceptionFile=numberOfFiles*BaseTime/numberOfFilesWithExceptions;//TODO: add baseline, weight and so on..
+
         float weightPerExtraTimeExceptionFile = 1f * (BaseTime * numberOfFiles) / (numberOfFiles + numberOfFilesWithExceptions * (ExtraTime));
         if (staticDynamic)
             weightPerExtraTimeExceptionFile = BaseTime;
         String filename = file.getAbsolutePath();
         String classname = filename.substring(filename.indexOf("/" + classesStartIn) + 1).replace('/', '.');
         classname = classname.substring(0, classname.length() - ".class".length());
-        //String path=filename.substring(0,filename.indexOf("\\org")); //Windows
-//        if (errCount.containsKey(name)){
-//            totalTime+=weightPerExceptionFile*errCount.get(name);
-//            weight=(int)weightPerExceptionFile*errCount.get(name);
-//        }
+
         int weight = (int) weightPerExtraTimeExceptionFile;
         if (errCount.containsKey(name) && errCount.get(name) > 0) {
             weight += ExtraTime * weightPerExtraTimeExceptionFile;
@@ -265,20 +231,6 @@ public class Main {
         //gs+="javac evosuite-tests/"+ classname.replace('.','/').substring(0,classname.length()-".class".length()) +"_ESTest.java -cp \"evosuite-runtime-1.0.3.jar;evosuite-tests;target/dependency/junit-4.12.jar;target/dependency/hamcrest-core-1.3.jar;"+path+"\"\n";
         //gs+="java -cp \"evosuite-runtime-1.0.3.jar:evosuite-tests:junit-4.12.jar:hamcrest-core-1.3.jar:Lang/\""+path+" org.junit.runner.JUnitCore "+classname.replace('.','/').substring(0,classname.length()-".class".length()) +"\"_ESTest\"\n";
         //gs+="java -cp \"evosuite-runtime-1.0.3.jar;evosuite-tests;target/dependency/junit-4.12.jar;target/dependency/hamcrest-core-1.3.jar;"+path+"\" org.junit.runner.JUnitCore "+classname.replace('.','/').substring(0,classname.length()-".class".length()) +"\"_ESTest\"\n";
-
-        /*TODO:
-        remove the .class
-
-        for linux:
-            change ; to :
-            \ to /
-            C:\ to /mnt/c/
-            add #!/bin/bash
-
-
-
-            check: does line 2 and 3 are even required???
-         */
     }
 /*
     passes over the evosuite tests, and enters the errors found into the various data structures.
@@ -293,6 +245,8 @@ public class Main {
         writeFile(fileToWrite, content);
     }
 
+    //create files that use evosuite on a project with fixed time, changing based on the number of errors that defects4j reported
+    //also creates a project_runme file to run all of the tests with from a single file
     public static void createFileTests() {
 
         //listf("C:\\Users\\rel\\workspace\\evotrimmer\\tests");
@@ -321,14 +275,14 @@ public class Main {
                 writeFile(fileToWrite, content);
             }
     }
-
+//run createTestEvoRunner on all files
     public static void getFileTests() {
         numberOfException = 0;
         numberOfFiles = 0;
         DoOnAllFiles(path,doOnFiles.CHECKISBUGGY);
         DoOnAllFiles(path,doOnFiles.CREATETEST);
     }
-
+// helper function to createTestEvoRunner, used to couunt the actual files and files with exception
     private static void IsBuggy(File file) {
         File weights = new File("ProjectBugs_" + pname + ".csv");
         Stream<String> stream = null;
@@ -355,7 +309,8 @@ public class Main {
         }
         numberOfFiles += 1;
     }
-
+    //passes over the project classes, and populate the string 'gs' with commands to run evosuite on them.
+    //processes gets additional time compared to others based on defects4j errors.
     private static void createTestEvoRunner(File file) {
         final float weightPerFile = 1f * (BaseTime * numberOfFiles) / (numberOfFiles + numberOfException * (ExtraTime));
         System.out.println(weightPerFile);
@@ -392,51 +347,12 @@ public class Main {
         //gs+="javac evosuite-tests/"+ classname.replace('.','/').substring(0,classname.length()-".class".length()) +"_ESTest.java -cp \"evosuite-runtime-1.0.3.jar;evosuite-tests;target/dependency/junit-4.12.jar;target/dependency/hamcrest-core-1.3.jar;"+path+"\"\n";
         //gs+="java -cp \"evosuite-runtime-1.0.3.jar:evosuite-tests:junit-4.12.jar:hamcrest-core-1.3.jar:Lang/\""+path+" org.junit.runner.JUnitCore "+classname.replace('.','/').substring(0,classname.length()-".class".length()) +"\"_ESTest\"\n";
         //gs+="java -cp \"evosuite-runtime-1.0.3.jar;evosuite-tests;target/dependency/junit-4.12.jar;target/dependency/hamcrest-core-1.3.jar;"+path+"\" org.junit.runner.JUnitCore "+classname.replace('.','/').substring(0,classname.length()-".class".length()) +"\"_ESTest\"\n";
-
-        /*TODO:
-        remove the .class
-
-        for linux:
-            change ; to :
-            \ to /
-            C:\ to /mnt/c/
-            add #!/bin/bash
-
-
-
-            check: does line 2 and 3 are even required???
-         */
     }
 
-    //    private static void createBalancedEvoRunner(File file) {
-//        String filename=file.getAbsolutePath();
-//        if (filename.contains("$")) return;
-//        String classname=filename.substring(filename.indexOf("\\org")+1).replace('\\','.');
-//        classname=classname.substring(0,classname.length()-".class".length());
-//        String path=filename.substring(0,filename.indexOf("\\org"));
-//        gs+="java -jar evosuite-1.0.3.jar -class "+classname+" -projectCP "+path+"  -Dsearch_budget="+60+" -Dassertion_timeout="+60+"\n";
-//        //gs+="javac evosuite-tests/"+ classname.replace('.','/').substring(0,classname.length()-".class".length()) +"_ESTest.java -cp \"evosuite-runtime-1.0.3.jar:evosuite-tests:hamcrest-core-1.3.jar:junit-4.12.jar:\""+path+"\n";
-//            //gs+="javac evosuite-tests/"+ classname.replace('.','/').substring(0,classname.length()-".class".length()) +"_ESTest.java -cp \"evosuite-runtime-1.0.3.jar;evosuite-tests;target/dependency/junit-4.12.jar;target/dependency/hamcrest-core-1.3.jar;"+path+"\"\n";
-//        //gs+="java -cp \"evosuite-runtime-1.0.3.jar:evosuite-tests:junit-4.12.jar:hamcrest-core-1.3.jar:Lang/\""+path+" org.junit.runner.JUnitCore "+classname.replace('.','/').substring(0,classname.length()-".class".length()) +"\"_ESTest\"\n";
-//            //gs+="java -cp \"evosuite-runtime-1.0.3.jar;evosuite-tests;target/dependency/junit-4.12.jar;target/dependency/hamcrest-core-1.3.jar;"+path+"\" org.junit.runner.JUnitCore "+classname.replace('.','/').substring(0,classname.length()-".class".length()) +"\"_ESTest\"\n";
-//
-//        /*TODO:
-//        remove the .class
-//
-//        for linux:
-//            change ; to :
-//            \ to /
-//            C:\ to /mnt/c/
-//            add #!/bin/bash
-//
-//
-//
-//            check: does line 2 and 3 are even required???
-//         */
-//    }
-/*
-parse the evosuite tests. inserts relevant data to the file structers for later use. inserts the bugs' data into gs for later print or access
- */
+
+    /*
+        parse the evosuite tests. inserts relevant data to the file structers for later use. inserts the bugs' data into gs for later print or access
+    */
     public static void onlyExceptions(File file) {
         try {
             boolean TRY = false;
@@ -497,6 +413,7 @@ parse the evosuite tests. inserts relevant data to the file structers for later 
                                 }
                             }
                             if (!RemoveNoneBugException(errorSource)) {
+                                // testnumber | iteration | full path | test file | exception | throwing class | allocated | had exception | error massage
                                 gs += testNumber + "," + iteration + "," + file.getAbsolutePath() + ", " + file.getName() + ", " + error + ", " + errorSource + "," + allocated + "," + hadException + ", " + errorText + "\n";
                                 errCount.put(filename, errCount.get(filename) + 1);
                             }
@@ -518,11 +435,13 @@ parse the evosuite tests. inserts relevant data to the file structers for later 
         }
     }
 
-    private static boolean RemoveNoneBugException(String error) {
-
-        return error.toLowerCase().contains("evosuite");
+    //Function in charge of removing exceptions that we believe never indicate a bug.
+    //Return true if the exception never indicate a bug.
+    private static boolean RemoveNoneBugException(String throwingClass) {
+        return throwingClass.toLowerCase().contains("evosuite");
     }
 
+    //takes a java test file, remove the try/catch from tests, causing them to file when ran.
     public static void commentExceptions(File file) {
         try {
             boolean TRY = false;
@@ -563,13 +482,17 @@ parse the evosuite tests. inserts relevant data to the file structers for later 
         }
     }
 
+    /*
+    opens a bash in the current directory, and executes the command
+     */
     public static void exec(String command) {
         Process p = null;
         print("starting to execute: " + command);
         try {
+            //create the process and instantiate variables
             p = new ProcessBuilder("bash").start();
             PrintWriter stdin = new PrintWriter(p.getOutputStream());
-            stdin.println(command);
+            stdin.println(command); //give the process (bash) our command
             BufferedReader stdout =
                     new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader stderr =
@@ -577,19 +500,19 @@ parse the evosuite tests. inserts relevant data to the file structers for later 
             print("streams started");
             String i = "";
             String j = "";
-            stdin.close();
+            stdin.close(); //we finished giving commands at this point
 
-            while (i != null) {
+            while (i != null) { //pipe the process' stdout to our stdout
                 i = stdout.readLine();
                 print(i);
             }
 
-            while (j != null) {
+            while (j != null) { // pipe te process' stderr to our stdout
                 j = stderr.readLine();
                 print(j);
             }
             print("streams ended");
-            p.waitFor();
+            p.waitFor();//wait for the process to die
 //            executeCommands();
         } catch (Exception e) {
             System.out.print("\n\n\n failed! exception: " +e+"\n\n\n");
@@ -601,20 +524,57 @@ parse the evosuite tests. inserts relevant data to the file structers for later 
             }
         }
     }
-
+    //forall exec on a collection
     public static void exec(Collection<String> commandList) {
         for (String s : commandList) {
             exec(s);
         }
     }
-
+    //forall exec on a list
     public static void exec(String[] list) {
         for (String s : list) {
             exec(s);
         }
     }
 
+    //shorthand for system.out.println
     public static void print(String s) {
         System.out.println(s);
+    }
+
+    //write a file fname with body content
+    private static void writeFile(String fname, String content) {
+        BufferedWriter bw = null;
+        FileWriter fw = null;
+
+        try {
+
+            //fw = new FileWriter("C:\\Users\\rel\\workspace\\evotrimmer\\Exceptions.csv");
+            fw = new FileWriter(fname);
+            bw = new BufferedWriter(fw);
+            bw.write(content);
+            System.out.println("Done");
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        } finally {
+
+            try {
+
+                if (bw != null)
+                    bw.close();
+
+                if (fw != null)
+                    fw.close();
+
+            } catch (IOException ex) {
+
+                ex.printStackTrace();
+
+            }
+
+        }
     }
 }
