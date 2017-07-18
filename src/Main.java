@@ -496,7 +496,7 @@ parse the evosuite tests. inserts relevant data to the file structers for later 
                                     allocated = timeAllocated.get(name);
                                 }
                             }
-                            if (!RemoveNoneBugException(error)) {
+                            if (!RemoveNoneBugException(errorSource)) {
                                 gs += testNumber + "," + iteration + "," + file.getAbsolutePath() + ", " + file.getName() + ", " + error + ", " + errorSource + "," + allocated + "," + hadException + ", " + errorText + "\n";
                                 errCount.put(filename, errCount.get(filename) + 1);
                             }
@@ -519,6 +519,7 @@ parse the evosuite tests. inserts relevant data to the file structers for later 
     }
 
     private static boolean RemoveNoneBugException(String error) {
+
         return error.toLowerCase().contains("evosuite");
     }
 
