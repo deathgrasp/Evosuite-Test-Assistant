@@ -1,0 +1,63 @@
+﻿		The program is set to run for windows. unlikely to work on Linux.
+1) Download anaconda 32bit (version 2.7) from https://www.continuum.io/downloads
+2) Install anaconda 32bit, add it to the PATH (either via installer or manually)
+3) Get Amir's code from https://github.com/amir9979/Debugger
+4) In Debugger/learner, run the setup with the command: "python setup.py develop"
+	4.1) if you get an error that it failed to get a package, use "pip install <missing package>"
+	4.2) repeat 4), and check that there was no error.
+5)ensure github3.py version is 0.9.6 using "python -m pip show github3.py"
+	5.1) use python -m pip install github3.py==0.9.6 to install correct version otherwise
+6) Ensure you have java installed, and that the command "javadoc" works. Javadoc can be found in your jdk/lib folder (set PATH to that  directory)
+7) Use "Python wrapper.py <Configuration file> learn" to run the program
+	the results will be located in the "weka" folder @ workingDir
+
+the configuration file includes:
+workingDir - התיקייה המקומית שבה ישמר המידע
+git - הנתיב לגיט של הפרוייקט ( נתיב לוקאלי בלבד)
+issue_tracker - באיזה issue_tracker להשתמש ( כרגע נתמכים bugzilla, jira, github) 
+issue_tracker_product_name - מהו הרכיב עבורו רוצים להוריד את הבאגים
+issue_tracker_url - הכתובת של האתר ממנו יש להוריד את נתוני הבאגים
+vers - רשימת הגרסאות עבורן מתבצעת הלמידה
+
+For example, we could use the following as a conf file for Apache's Ant program:
+workingDir=C:\new_users\usr\test\out
+git=C:\new_users\usr\test\rootGit\ant
+issue_tracker_product_name=Ant
+issue_tracker_url=bz.apache.org/bugzilla
+issue_tracker=bugzilla
+vers=(ANT_154,ANT_165,ANT_180_RC1,ANT_180,ANT_182,ANT_183)
+
+example for project Time in defects4j:
+workingDir=C:\Users\REL\Debugger\learner\Time1LearnerTest
+git=C:\Users\REL\Downloads\defects4j-master\framework\bin\Time1FromGit\joda-time
+issue_tracker_product_name=joda-time
+issue_tracker_url=JodaOrg
+issue_tracker=github
+vers=(v0.9,v1.0,v1.1,v1.3,v1.5,v2.0,v2.0-RC1,v2.3,v2.5,v2.8,v2.9)
+
+
+		connecting between defects4j and Amir's program
+note: we want to use the official git versions as they contain all the information for Amir's program. I assume that defects4j's sha may not be the same as the one used by said repositories.
+
+linux part:
+1) Install defects4j, as instructed from their github page.
+2) Use "./defects4j info -p <project> -b <bug version>" to get the information of a specific bug version
+3) Below "Revision date", you will find a date and time.
+	3.1) extract the date so that DATE is the day
+	3.2) extract the time so that TIME is the time
+4) set REPO as the location of the repository you are going to use. for example, REPO=apache/commons-math
+5) use "  curl https://api.github.com/search/commits?q=repo:$REPO+committer-date:"$DATE"T"$TIME"Z -H "Accept:   application/vnd.github.cloak-preview"  " to get the information about the commit.
+	5.1) under item, we will find a sha code. save it
+		for example, under items we will see:
+		"url": "https://api.github.com/repos/apache/commons-math/commits/2c443ab8b0efce5485f63eed62213091a188c993",
+		"sha": "2c443ab8b0efce5485f63eed62213091a188c993", //This is the sha we want!
+	Note: curl returns a json file. you can use -I to turn it into one, if it helps with parsing the data.
+
+***Some projects may contain commits with the same time. This may cause issues with this way.
+***Some projects share the same commit sha as the site, such as Time. You can simply extract the sha instead of searching for it, that way
+
+Windows:
+1) Clone the repository we are going to us. "git clone github.com/$REPO"
+2) Fetch the correct version. "git checkout $sha"
+3) Set the config file to the correct location and file type
+4) Run Amir's program

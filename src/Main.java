@@ -1,3 +1,5 @@
+import org.evosuite.symbolic.vm.string.Substring;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -9,7 +11,7 @@ import java.util.stream.Stream;
  * Created by rel on 27-Mar-17.
  */
 public class Main {
-    private static int ExtraTime = 4;
+    private static int ExtraTime = 0;
     private static int BaseTime = 60;
     private static float totalTime = 0;
     private static int checkOneIn = 0;
@@ -79,7 +81,136 @@ public class Main {
         }
         return true;
     }
+    //script in to take a bugged class from defects4j, and run a test on the whole package it's in.
+    //for example, if we get the class A.B.C, we will check the package A.B.*
+    public static void CompareSingleCheckToPackage(String[] args){
+        String name= args[0];
+        if (name.equals("Lang")){
+            int[] classes=new int[66];
+            for (int i=1; i<=65; i++){
+                String[] infoInput=ExecAndExport("defects4j info -p Lang -b "+i).split("---------------------");
+                int modifiedPlace=0;
+                for (int j=0; j<infoInput.length; j++) {
+                    if (infoInput[j].contains("List of modified"))
+                    {
+                        modifiedPlace=j;
+                        break;
+                    }
+                }
+                String klass=infoInput[modifiedPlace].split("-")[infoInput[modifiedPlace].split("-").length-1].trim();
+                String pack=klass.substring(0, klass.lastIndexOf('.'));
+                ExecAndExport("\tdefects4j checkout -p Lang -v "+i+"\"f\" -w Lang"+i+"fixed\n");
+                ExecAndExport(	"(cd Lang"+i+"fixed; ant compile)");
+                String folder="Lang"+i+"fixed/target/classes";
+                int t=60;
+                for (int j=0; j<5; j++){
+                    String[] packInput=ExecAndExport("java -jar evosuite-1.0.3.jar -prefix "+pack+" -projectCP "+folder+"  -Dsearch_budget="+t+" -Dassertion_timeout="+t+" -Dextra_timeout="+t).split("\\*");
+                    for (int k=0; k<packInput.length; k++) {
+                        if (packInput[k].contains("matching classes for prefix"))
+                        {
+                            modifiedPlace=k;
+                            break;
+                        }
+                    }
+                    classes[i]=Integer.parseInt(packInput[modifiedPlace].trim().split(" ")[1].trim());
+                    exec("javac "+pack.replace(".","/")+"* -cp evosuite-runtime-1.0.3.jar:evosuite-tests:hamcrest-core-1.3.jar:junit-4.12.jar:"+folder);
+                    exec("cp -r evosuite-tests evosuite-tests_Lang_"+i+"_"+j+"PACK");
+                    exec("rm -rf evosuite-tests");
+                }
 
+            }
+
+            for (int i=1; i<=65; i++){
+
+                String[] infoInput=ExecAndExport("defects4j info -p Lang -b "+i).split("---------------------");
+                int modifiedPlace=0;
+                for (int j=0; j<infoInput.length; j++) {
+                    if (infoInput[j].contains("List of modified"))
+                    {
+                        modifiedPlace=j;
+                        break;
+                    }
+                }
+                String klass=infoInput[modifiedPlace].split("-")[infoInput[modifiedPlace].split("-").length-1].trim();
+                String pack=klass.substring(0, klass.lastIndexOf('.'));
+                ExecAndExport("\tdefects4j checkout -p Lang -v "+i+"\"f\" -w Lang"+i+"buggy\n");
+                ExecAndExport(	"(cd Lang"+i+"buggy; ant compile)");
+                String folder="Lang"+i+"buggy/target/classes";
+                int t=60;
+                for (int j=0; j<5; j++){
+                    String packInput=ExecAndExport("java -cp evosuite-runtime-1.0.3.jar:evosuite-tests_Lang_"+i+"_"+j+"PACK"+":junit-4.12.jar:hamcrest-core-1.3.jar:"+folder+" org.junit.runner.JUnitCore "+pack.replace(".","/")+"*>> FixedOnBuggy_Lang_"+i+"PACK");
+                }
+                String errorsString= exec("grep -c FAILURES\\!\\!\\! FixedOnBuggy_Lang_"+i+"PACK").trim();
+                    errorsString=errorsString.substring(0,errorsString.length()-5);
+                int errors=Integer.parseInt(errorsString);
+                exec("echo Lang, "+i+", ???, " +t+", "+errors+" >> packagebugFile");
+            }
+
+
+            for (int i=1; i<=65; i++){
+                String[] infoInput=ExecAndExport("defects4j info -p Lang -b "+i).split("---------------------");
+                int modifiedPlace=0;
+                for (int j=0; j<infoInput.length; j++) {
+                    if (infoInput[j].contains("List of modified"))
+                    {
+                        modifiedPlace=j;
+                        break;
+                    }
+                }
+                String klass=infoInput[modifiedPlace].split("-")[infoInput[modifiedPlace].split("-").length-1].trim();
+                String pack=klass.substring(0, klass.lastIndexOf('.'));
+                ExecAndExport("\tdefects4j checkout -p Lang -v "+i+"\"f\" -w Lang"+i+"fixed\n");
+                ExecAndExport(	"(cd Lang"+i+"fixed; ant compile)");
+                String folder="Lang"+i+"fixed/target/classes";
+                int t=60*classes[i];
+                for (int j=0; j<5; j++){
+                    String[] packInput=ExecAndExport("java -jar evosuite-1.0.3.jar -class "+klass+" -projectCP "+folder+"  -Dsearch_budget="+t+" -Dassertion_timeout="+t+" -Dextra_timeout="+t).split("\\*");
+                    for (int k=0; k<packInput.length; k++) {
+                        if (packInput[k].contains("matching classes for prefix"))
+                        {
+                            modifiedPlace=k;
+                            break;
+                        }
+                    }
+                    exec("javac "+pack.replace(".","/")+"* -cp evosuite-runtime-1.0.3.jar:evosuite-tests:hamcrest-core-1.3.jar:junit-4.12.jar:"+folder);
+                    exec("cp -r evosuite-tests evosuite-tests_Lang_"+i+"_"+j);
+                    exec("rm -rf evosuite-tests");
+                }
+
+            }
+
+            for (int i=1; i<=65; i++){
+
+                String[] infoInput=ExecAndExport("defects4j info -p Lang -b "+i).split("---------------------");
+                int modifiedPlace=0;
+                for (int j=0; j<infoInput.length; j++) {
+                    if (infoInput[j].contains("List of modified"))
+                    {
+                        modifiedPlace=j;
+                        break;
+                    }
+                }
+                String klass=infoInput[modifiedPlace].split("-")[infoInput[modifiedPlace].split("-").length-1].trim();
+                String pack=klass.substring(0, klass.lastIndexOf('.'));
+                ExecAndExport("\tdefects4j checkout -p Lang -v "+i+"\"f\" -w Lang"+i+"buggy\n");
+                ExecAndExport(	"(cd Lang"+i+"buggy; ant compile)");
+                String folder="Lang"+i+"buggy/target/classes";
+                int t=60*classes[i];
+                for (int j=0; j<5; j++){
+                    String packInput=ExecAndExport("java -cp evosuite-runtime-1.0.3.jar:evosuite-tests_Lang_"+i+"_"+j+":junit-4.12.jar:hamcrest-core-1.3.jar:"+folder+" org.junit.runner.JUnitCore "+pack.replace(".","/")+"*>> FixedOnBuggy_Lang_"+i);
+                }
+                String errorsString= exec("grep -c FAILURES\\!\\!\\! FixedOnBuggy_Lang_"+i).trim();
+                errorsString=errorsString.substring(0,errorsString.length()-5);
+                int errors=Integer.parseInt(errorsString);
+                exec("echo Lang, "+i+", "+klass+", " +t+", "+errors+" >> packagebugFile");
+            }
+
+
+        }
+    }
+    public static String ExecAndExport(String s){
+        return exec(("export PATH=$PATH:~/defects4j/framework/bin\n"+s).split("\n"));
+    }
     public static void main(String[] args) {
         if (args.length <= 0) {
             print("enter the project name you wish to run. Write multiple to run multiple ones one after the other.");
@@ -485,14 +616,15 @@ public class Main {
     /*
     opens a bash in the current directory, and executes the command
      */
-    public static void exec(String command) {
+    public static String exec(String command) {
         Process p = null;
+        String output="";
         print("starting to execute: " + command);
         try {
             //create the process and instantiate variables
             p = new ProcessBuilder("bash").start();
             PrintWriter stdin = new PrintWriter(p.getOutputStream());
-            stdin.println(command); //give the process (bash) our command
+            stdin.println(command+ " 2>&1"); //give the process (bash) our command
             BufferedReader stdout =
                     new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader stderr =
@@ -505,6 +637,7 @@ public class Main {
             while (i != null) { //pipe the process' stdout to our stdout
                 i = stdout.readLine();
                 print(i);
+                output+=i;
             }
 
             while (j != null) { // pipe te process' stderr to our stdout
@@ -523,18 +656,24 @@ public class Main {
                 print("failed to destroy the a process, as it was already null.");
             }
         }
+        return output;
     }
     //forall exec on a collection
-    public static void exec(Collection<String> commandList) {
+    public static String exec(Collection<String> commandList) {
+
+        String ret="";
         for (String s : commandList) {
-            exec(s);
+            ret+=exec(s);
         }
+        return ret;
     }
     //forall exec on a list
-    public static void exec(String[] list) {
+    public static String exec(String[] list) {
+        String ret="";
         for (String s : list) {
-            exec(s);
+            ret+=exec(s);
         }
+        return ret;
     }
 
     //shorthand for system.out.println
