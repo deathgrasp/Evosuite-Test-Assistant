@@ -1,0 +1,211 @@
+#!/bin/bash
+
+#For each bug in Time, run a test on the package with the bug. This is a uniform, non recursive test, allocating 60 seconds per class.
+#Output: line per test, with the number of classes that failed a junit test.
+
+export PATH=$PATH:~/defects4j/framework/bin
+echo starting
+FILE=Report.csv
+echo "project, BugID, Bugged class, Time given to evosuite, Num of failures" > $FILE
+NAME=Time
+TESTS=27
+for i in {1..11}
+do
+	INFO=$(defects4j info -p $NAME -b $i)
+        FILELINE=$(awk 'f {print; exit} /List of modified/ {f=1}' <<<"$INFO")
+        BUGGYCLASS=$(echo $FILELINE| cut -d ' ' -f 2) #classname
+	CP=${BUGGYCLASS%.*}
+	CLASSESPATH=${CP//"."/"/"}
+	defects4j checkout -p $NAME -v $i"f" -w $NAME$i"fixed"/
+
+	echo checkedout
+	(cd $NAME$i"fixed"; ant compile)
+	defects4j checkout -p $NAME -v $i"b" -w $NAME$i"buggy"/
+	echo checkedout
+	(cd $NAME$i"buggy"; ant compile)
+
+	BUILDPATH="$NAME"$i"fixed/target/classes"
+	t=60
+	for j in {1..5}
+	do
+		A=$(find "$BUILDPATH"/"$CLASSESPATH" -maxdepth 1 -mindepth 1 -name *.class | grep -v '\$') #path
+		B=${A//$BUILDPATH'/'/} #remove the initial
+		C=${B//.class/} #remove the .class
+		D=${C//"/"/.} #turn '/' to '.'
+		CLASSES=$(echo $D | tr " " "\n") #split
+		for CLASS in $CLASSES #run evosuite
+		do 
+			java -jar evosuite-1.0.3.jar -class $CLASS -projectCP $BUILDPATH  -Dsearch_budget=$t -Dassertion_timeout=$t -Dextra_timeout=0
+		done
+		cp -r evosuite-tests "evosuite-tests_"$NAME"_"$i"_"$j
+		rm -rf evosuite-tests
+		
+		#compile the classes. 
+		javac evosuite-tests_"$NAME"_"$i"_"$j"/"$CLASSESPATH"/* -cp "evosuite-runtime-1.0.3.jar:evosuite-tests:hamcrest-core-1.3.jar:junit-4.12.jar:"$BUILDPATH
+		#get a list of all the classes and test with junit
+		A=$(find "evosuite-tests_"$NAME"_"$i"_"$j -name *est.class) #path
+		B=${A//evosuite-tests_"$NAME"_"$i"_"$j"'/'/} #remove the initial
+		C=${B//.class/} #remove the .class
+		D=${C//"/"/.} #turn '/' to '.'
+		CLASSES=$(echo $D | tr " " "\n") #split
+		for CLASS in $CLASSES #run tests
+		do 
+			java -cp "evosuite-tests_Time_"$i"_"$j":evosuite-runtime-1.0.3.jar:junit-4.12.jar:hamcrest-core-1.3.jar:"Time"$i"buggy/target/classes org.junit.runner.JUnitCore $CLASS >> FixedOnBuggy_"$i"_"$j" #on buggy version
+			java -cp "evosuite-tests_Time_"$i"_"$j":evosuite-runtime-1.0.3.jar:junit-4.12.jar:hamcrest-core-1.3.jar:"Time"$i"fixed/target/classes org.junit.runner.JUnitCore $CLASS >> FixedOnBuggy_"$i"_"$j"_Fixed #on fixed version
+		done
+		diff FixedOnBuggy_"$i"_"$j" FixedOnBuggy_"$i"_"$j"_Fixed > diff_"$i"_"$j" #check the actual difference
+		COUNT=$(grep -c "FAILURES\!\!\!" diff_"$i"_"$j")
+		echo $NAME, $i, $BUGGYCLASS, $t, $COUNT >> $FILE
+	done
+done
+
+
+#second bug
+for i in 1 2
+do
+	INFO=$(defects4j info -p $NAME -b $i)
+        FILELINE=$(awk 'f {print; exit} /List of modified/ {f=1}' <<<"$INFO")
+	FILELINE2=awk 'f {print; exit} /'$FILELINE'/ {f=1}' <<<"$INFO"
+        BUGGYCLASS=$(echo $FILELINE2| cut -d ' ' -f 2) #classname
+	CP=${BUGGYCLASS%.*}
+	CLASSESPATH=${CP//"."/"/"}
+
+	BUILDPATH="$NAME"$i"fixed/target/classes"
+	t=60
+	for j in {1..5}
+	do
+		A=$(find "$BUILDPATH"/"$CLASSESPATH" -maxdepth 1 -mindepth 1 -name *.class) #path
+		B=${A//"$BUILDPATH"'/'/} #remove the initial
+		C=${B//.class/} #remove the .class
+		D=${C//"/"/.} #turn '/' to '.'
+		CLASSES=$(echo $D | tr " " "\n") #split
+		for CLASS in $CLASSES #run evosuite
+		do 
+			java -jar evosuite-1.0.3.jar -class $CLASS -projectCP $BUILDPATH  -Dsearch_budget=$t -Dassertion_timeout=$t -Dextra_timeout=0
+		done
+		cp -r evosuite-tests "evosuite-tests_"$NAME"_"$i"_"$j"_"second
+		rm -rf evosuite-tests
+		
+		#compile the classes. 
+		javac evosuite-tests_"$NAME"_"$i"_"$j"_second/"$CLASSESPATH"/* -cp "evosuite-runtime-1.0.3.jar:evosuite-tests:hamcrest-core-1.3.jar:junit-4.12.jar:"$BUILDPATH
+		#get a list of all the classes and test with junit
+		A=$(find "evosuite-tests_"$NAME"_"$i"_"$j"_second" -name *est.class) #path
+		B=${A//evosuite-tests_"$NAME"_"%i"_"%j"_second/} #remove the initial
+		C=${B//.class/} #remove the .class
+		D=${C//"/"/.} #turn '/' to '.'
+		CLASSES=$(echo $D | tr " " "\n") #split
+		for CLASS in $CLASSES #run tests
+		do 
+			java -cp "evosuite-tests_Time_"$i"_"$j"_second:evosuite-runtime-1.0.3.jar:junit-4.12.jar:hamcrest-core-1.3.jar:"Time"$i"buggy/target/classes org.junit.runner.JUnitCore $CLASS >> FixedOnBuggy_"$i"_"$j"_second #on buggy version
+			java -cp "evosuite-tests_Time_"$i"_"$j"_second:evosuite-runtime-1.0.3.jar:junit-4.12.jar:hamcrest-core-1.3.jar:"Time"$i"fixed/target/classes org.junit.runner.JUnitCore $CLASS >> FixedOnBuggy_"$i"_"$j"_Fixed_second #on fixed version
+		done
+		diff FixedOnBuggy_"$i"_"$j"_second FixedOnBuggy_"$i"_"$j"_Fixed_second > diff_"$i"_"$j"_second #check the actual difference
+		COUNT=$(grep -c "FAILURES\!\!\!" diff_"$i"_"$j")
+		echo $NAME, $i, $BUGGYCLASS, $t, $COUNT >> $FILE
+	done
+done
+
+
+
+NAME=Time
+TESTS=27
+for i in {12..27}
+do
+	INFO=$(defects4j info -p $NAME -b $i)
+        FILELINE=$(awk 'f {print; exit} /List of modified/ {f=1}' <<<"$INFO")
+        BUGGYCLASS=$(echo $FILELINE| cut -d ' ' -f 2) #classname
+	CLASSESPATH=${BUGGYCLASS%.*}
+	defects4j checkout -p $NAME -v $i"f" -w $NAME$i"fixed"/
+	echo checkedout
+	(cd $NAME$i"fixed"; ant compile)
+	defects4j checkout -p $NAME -v $i"b" -w $NAME$i"buggy"/
+	echo checkedout
+	(cd $NAME$i"buggy"; ant compile)
+	BUILDPATH="$NAME"$i"fixed/build/classes"
+	t=60
+	for j in {1..5}
+	do
+
+		A=$(find "$BUILDPATH"/"$CLASSESPATH" -maxdepth 1 -mindepth 1 -name *.class) #path
+		B=${A//"$BUILDPATH"'/'/} #remove the initial
+		C=${B//.class/} #remove the .class
+		D=${C//"/"/.} #turn '/' to '.'
+		CLASSES=$(echo $D | tr " " "\n") #split
+		for CLASS in $CLASSES #run evosuite
+		do 
+			java -jar evosuite-1.0.3.jar -class $CLASS -projectCP $BUILDPATH  -Dsearch_budget=$t -Dassertion_timeout=$t -Dextra_timeout=0
+		done
+		cp -r evosuite-tests "evosuite-tests_"$NAME"_"$i"_"$j
+		rm -rf evosuite-tests
+
+		#compile the classes. note that for other projects, additional '*' may be required.
+		javac evosuite-tests_"$NAME"_"$i"_"$j"_second/"$CLASSESPATH"/* -cp "evosuite-runtime-1.0.3.jar:evosuite-tests:hamcrest-core-1.3.jar:junit-4.12.jar:"$BUILDPATH
+		#get a list of all the classes and test with junit
+		A=$(find "evosuite-tests_"$NAME"_"$i"_"$j -name *est.class) #path
+		B=${A//evosuite-tests_"$NAME"_"$i"_"$j"/} #remove the initial
+		C=${B//.class/} #remove the .class
+		D=${C//"/"/.} #turn '/' to '.'
+		CLASSES=$(echo $D | tr " " "\n") #split
+		for CLASS in $CLASSES #run tests
+		do 
+			java -cp "evosuite-tests_Time_"$i"_"$j":evosuite-runtime-1.0.3.jar:junit-4.12.jar:hamcrest-core-1.3.jar:"Time"$i"buggy/build/classes org.junit.runner.JUnitCore $CLASS >> FixedOnBuggy_"$i"_"$j" #on buggy version
+			java -cp "evosuite-tests_Time_"$i"_"$j":evosuite-runtime-1.0.3.jar:junit-4.12.jar:hamcrest-core-1.3.jar:"Time"$i"fixed/build/classes org.junit.runner.JUnitCore $CLASS >> FixedOnBuggy_"$i"_"$j"_Fixed #on fixed version
+		done
+		diff FixedOnBuggy_"$i"_"$j" FixedOnBuggy_"$i"_"$j"_Fixed > diff_"$i"_"$j" #check the actual difference
+		COUNT=$(grep -c "FAILURES\!\!\!" diff_"$i"_"$j")
+		echo $NAME, $i, $BUGGYCLASS, $t, $COUNT >> $FILE
+	done
+done
+
+
+#second bug
+
+
+NAME=Time
+TESTS=27
+for i in 12
+do
+	INFO=$(defects4j info -p $NAME -b $i)
+        FILELINE=$(awk 'f {print; exit} /List of modified/ {f=1}' <<<"$INFO")
+	FILELINE2=awk 'f {print; exit} /'$FILELINE'/ {f=1}' <<<"$INFO"
+        BUGGYCLASS=$(echo $FILELINE2| cut -d ' ' -f 2) #classname
+	CLASSESPATH=${BUGGYCLASS%.*}
+
+	BUILDPATH="$NAME"$i"fixed/build/classes"
+	t=60
+	for j in {1..5}
+	do
+
+		A=$(find "$BUILDPATH"/"$CLASSESPATH" -maxdepth 1 -mindepth 1 -name *.class) #path
+		B=${A//"$BUILDPATH"'/'/} #remove the initial
+		C=${B//.class/} #remove the .class
+		D=${C//"/"/.} #turn '/' to '.'
+		CLASSES=$(echo $D | tr " " "\n") #split
+		for CLASS in $CLASSES #run evosuite
+		do 
+			java -jar evosuite-1.0.3.jar -class $CLASS -projectCP $BUILDPATH  -Dsearch_budget=$t -Dassertion_timeout=$t -Dextra_timeout=0
+		done
+		cp -r evosuite-tests "evosuite-tests_"$NAME"_"$i"_"$j"_second"
+		rm -rf evosuite-tests
+
+		#compile the classes. note that for other projects, additional '*' may be required.
+		javac evosuite-tests_"$NAME"_"$i"_"$j"_second/"$CLASSESPATH"/* -cp "evosuite-runtime-1.0.3.jar:evosuite-tests:hamcrest-core-1.3.jar:junit-4.12.jar:"$BUILDPATH
+		#get a list of all the classes and test with junit
+		A=$(find "evosuite-tests_"$NAME"_"$i"_"$j"_second" -name *est.class) #path
+		B=${A//evosuite-tests_"$NAME"_"$i"_"$j"_second/} #remove the initial
+		C=${B//.class/} #remove the .class
+		D=${C//"/"/.} #turn '/' to '.'
+		CLASSES=$(echo $D | tr " " "\n") #split
+		for CLASS in $CLASSES #run tests
+		do 
+			java -cp "evosuite-tests_Time_"$i"_"$j"_second:evosuite-runtime-1.0.3.jar:junit-4.12.jar:hamcrest-core-1.3.jar:"Time"$i"buggy/build/classes org.junit.runner.JUnitCore $CLASS >> FixedOnBuggy_"$i"_"$j"_second #on buggy version
+			java -cp "evosuite-tests_Time_"$i"_"$j"_second:evosuite-runtime-1.0.3.jar:junit-4.12.jar:hamcrest-core-1.3.jar:"Time"$i"fixed/build/classes org.junit.runner.JUnitCore $CLASS >> FixedOnBuggy_"$i"_"$j"_Fixed_second #on fixed version
+		done
+		diff FixedOnBuggy_"$i"_"$j"_second FixedOnBuggy_"$i"_"$j"_Fixed_second > diff_"$i"_"$j"_second #check the actual difference
+		COUNT=$(grep -c "FAILURES\!\!\!" diff_"$i"_"$j")
+		echo $NAME, $i, $BUGGYCLASS, $t, $COUNT >> $FILE
+	done
+done
+
+
+

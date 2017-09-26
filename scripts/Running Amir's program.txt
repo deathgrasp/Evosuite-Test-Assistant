@@ -61,3 +61,10 @@ Windows:
 2) Fetch the correct version. "git checkout $sha"
 3) Set the config file to the correct location and file type
 4) Run Amir's program
+
+
+			works with linux
+How to install defects4j
+1) download defects4j from https://github.com/rjust/defects4j
+2) make sure you have ant, maven, git, svn installed
+3) follow the "getting started" in git 

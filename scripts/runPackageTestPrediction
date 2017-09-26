@@ -1,0 +1,159 @@
+#!/bin/bash
+
+#This script is used to run evosuite on certain bug versions of Time (on the versions that were fixed). Evosuite will run all of the classes, allocating 60 seconds per class.
+#Output: tests, number of failing tests on the buggy version, number of tests on the fixed version, and the difference between them.
+#Requires the dos2unix program to be installed.
+
+export PATH=$PATH:~/defects4j/framework/bin
+echo starting
+FILE=Report.csv
+echo "project, BugID, Bugged class, Time given to evosuite, Num of failures" > $FILE
+NAME=Time
+BASETIME=60
+TESTS=27
+for i in {1..11}
+do
+	INFO=$(defects4j info -p $NAME -b $i)
+        FILELINE=$(awk 'f {print; exit} /List of modified/ {f=1}' <<<"$INFO")
+        BUGGYCLASS=$(echo $FILELINE| cut -d ' ' -f 2) #classname
+	CP=${BUGGYCLASS%.*}
+	CLASSESPATH=${CP//"."/"/"}
+	defects4j checkout -p $NAME -v $i"f" -w $NAME$i"fixed"/
+
+	(cd $NAME$i"fixed"; ant compile)
+	defects4j checkout -p $NAME -v $i"b" -w $NAME$i"buggy"/
+	(cd $NAME$i"buggy"; ant compile)
+
+	BUILDPATH="$NAME"$i"fixed/target/classes"
+
+	#compute time to allocate 
+	NUMCLASSES=$(find "$BUILDPATH"/"$CLASSESPATH" -maxdepth 1 -mindepth 1 -name *.class | grep -v '\$' | wc -l) #count the number of classes without '$'
+	
+	A=$(find "$BUILDPATH"/"$CLASSESPATH" -maxdepth 1 -mindepth 1 -name *.class | grep -v '\$') #path to all classes without '$'
+	B=${A//"$BUILDPATH"'/'/} #remove the initial
+	C=${B//.class/} #remove the .class
+	D=${C//"/"/.} #turn '/' to '.'
+	CLASSES=$(echo $D | tr " " "\n") #split
+	SUMPRE=0
+	for CLASS in $CLASSES #sum predictions
+	do 
+		KLASS=${CLASS//"."/"\\\\"} #turn '.' to '\'
+		LINE=$(grep -m 1 "src\\\\main\\\\java\\\\"$KLASS"\." All_out_files"$i".csv) #get the linne containing the class
+		LINE=$(echo $LINE | dos2unix) #make sure the line is in a unix format
+		T=${LINE#*,*,*,*,*,} #get the prediction
+		SUMPRE=$(echo $T + $SUMPRE | bc) #sum, using bc
+	done
+	TOTALPREDICTION=$(echo "$BASETIME * $NUMCLASSES" | bc)
+	TOTALPREDICTION=$(echo "$TOTALPREDICTION / $SUMPRE" | bc)
+				echo "TOTALPREDICTION is $TOTALPREDICTION"
+	for j in {1..5}
+	do
+
+		echo "class,time" > runTimeClass_"$i"_"$j" #print how long we assigned to the class, to be viewed later
+		for CLASS in $CLASSES #run evosuite
+		do 
+			KLASS=${CLASS//"."/"\\\\"}
+			LINE=$(grep -m 1 "src\\\\main\\\\java\\\\"$KLASS"\." All_out_files"$i".csv)
+			LINE=$(echo $LINE | dos2unix)
+			T=${LINE#*,*,*,*,*,} #get the prediction
+			tfloat=$(echo "$T * $TOTALPREDICTION" | bc) #actual time for this class
+			t=${tfloat%.*} #evosuite works with seconds as integer
+			echo "running the following line: 			java -jar evosuite-1.0.3.jar -class $CLASS -projectCP $BUILDPATH  -Dsearch_budget=$t -Dassertion_timeout=$t -Dextra_timeout=0"
+			echo "$CLASS", "$t" >> runTimeClass_"$i"_"$j"
+			java -jar evosuite-1.0.3.jar -class $CLASS -projectCP $BUILDPATH  -Dsearch_budget=$t -Dassertion_timeout=$t -Dextra_timeout=0
+		done
+		cp -r evosuite-tests "evosuite-tests_"$NAME"_"$i"_"$j
+		rm -rf evosuite-tests
+		
+		#compile the classes. 
+		javac evosuite-tests_"$NAME"_"$i"_"$j"/"$CLASSESPATH"/* -cp "evosuite-runtime-1.0.3.jar:evosuite-tests:hamcrest-core-1.3.jar:junit-4.12.jar:"$BUILDPATH
+		#get a list of all the classes and test with junit
+		FIND=$(find "evosuite-tests_"$NAME"_"$i"_"$j -name *est.class) #path
+		REMOVEINITIAL=${FIND//evosuite-tests_"$NAME"_"$i"_"$j"'/'/} #remove the initial
+		REMOVECLASS=${REMOVEINITIAL//.class/} #remove the .class
+		CHANGEDOT=${REMOVECLASS//"/"/.} #turn '/' to '.'
+		SPLITTED=$(echo $CHANGEDOT | tr " " "\n") #split
+		for CLASS in $SPLITTED #run tests
+		do 
+			java -cp "evosuite-tests_Time_"$i"_"$j":evosuite-runtime-1.0.3.jar:junit-4.12.jar:hamcrest-core-1.3.jar:"Time"$i"buggy/target/classes org.junit.runner.JUnitCore $CLASS >> FixedOnBuggy_"$i"_"$j" #on buggy version
+			java -cp "evosuite-tests_Time_"$i"_"$j":evosuite-runtime-1.0.3.jar:junit-4.12.jar:hamcrest-core-1.3.jar:"Time"$i"fixed/target/classes org.junit.runner.JUnitCore $CLASS >> FixedOnBuggy_"$i"_"$j"_Fixed #on fixed version
+		done
+		diff FixedOnBuggy_"$i"_"$j" FixedOnBuggy_"$i"_"$j"_Fixed > diff_"$i"_"$j" #check the actual difference
+		COUNT=$(grep -c "Failure" diff_"$i"_"$j") #Count the number of "Failure". note that it can count a case that it failed in the fixed, but not in the buggy.
+		echo $NAME, $i, $BUGGYCLASS, $BASETIME, $COUNT >> $FILE
+	done
+done
+
+for i in {12..27}
+do
+	INFO=$(defects4j info -p $NAME -b $i)
+        FILELINE=$(awk 'f {print; exit} /List of modified/ {f=1}' <<<"$INFO")
+        BUGGYCLASS=$(echo $FILELINE| cut -d ' ' -f 2) #classname
+	CP=${BUGGYCLASS%.*}
+	CLASSESPATH=${CP//"."/"/"}
+	defects4j checkout -p $NAME -v $i"f" -w $NAME$i"fixed"/
+
+	(cd $NAME$i"fixed"; ant compile)
+	defects4j checkout -p $NAME -v $i"b" -w $NAME$i"buggy"/
+	(cd $NAME$i"buggy"; ant compile)
+
+	BUILDPATH="$NAME"$i"fixed/build/classes"
+
+	#compute time to allocate 
+	NUMCLASSES=$(find "$BUILDPATH"/"$CLASSESPATH" -maxdepth 1 -mindepth 1 -name *.class | grep -v '\$' | wc -l) #count the number of classes without '$'
+	
+	A=$(find "$BUILDPATH"/"$CLASSESPATH" -maxdepth 1 -mindepth 1 -name *.class | grep -v '\$') #path to all classes without '$'
+	B=${A//"$BUILDPATH"'/'/} #remove the initial
+	C=${B//.class/} #remove the .class
+	D=${C//"/"/.} #turn '/' to '.'
+	CLASSES=$(echo $D | tr " " "\n") #split
+	SUMPRE=0
+	for CLASS in $CLASSES #sum predictions
+	do 
+		KLASS=${CLASS//"."/"\\\\"} #turn '.' to '\'
+		LINE=$(grep -m 1 "src\\\\main\\\\java\\\\"$KLASS"\." All_out_files"$i".csv) #get the linne containing the class
+		LINE=$(echo $LINE | dos2unix) #make sure the line is in a unix format
+		T=${LINE#*,*,*,*,*,} #get the prediction
+		SUMPRE=$(echo $T + $SUMPRE | bc) #sum, using bc
+	done
+	TOTALPREDICTION=$(echo "$BASETIME * $NUMCLASSES" | bc)
+	TOTALPREDICTION=$(echo "$TOTALPREDICTION / $SUMPRE" | bc)
+				echo "TOTALPREDICTION is $TOTALPREDICTION"
+	for j in {1..5}
+	do
+
+		echo "class,time" > runTimeClass_"$i"_"$j" #print how long we assigned to the class, to be viewed later
+		for CLASS in $CLASSES #run evosuite
+		do 
+			KLASS=${CLASS//"."/"\\\\"}
+			LINE=$(grep -m 1 "src\\\\main\\\\java\\\\"$KLASS"\." All_out_files"$i".csv)
+			LINE=$(echo $LINE | dos2unix)
+			T=${LINE#*,*,*,*,*,} #get the prediction
+			tfloat=$(echo "$T * $TOTALPREDICTION" | bc) #actual time for this class
+			t=${tfloat%.*} #evosuite works with seconds as integer
+			echo "running the following line: 			java -jar evosuite-1.0.3.jar -class $CLASS -projectCP $BUILDPATH  -Dsearch_budget=$t -Dassertion_timeout=$t -Dextra_timeout=0"
+			echo "$CLASS", "$t" >> runTimeClass_"$i"_"$j"
+			java -jar evosuite-1.0.3.jar -class $CLASS -projectCP $BUILDPATH  -Dsearch_budget=$t -Dassertion_timeout=$t -Dextra_timeout=0
+		done
+		cp -r evosuite-tests "evosuite-tests_"$NAME"_"$i"_"$j
+		rm -rf evosuite-tests
+		
+		#compile the classes. 
+		javac evosuite-tests_"$NAME"_"$i"_"$j"/"$CLASSESPATH"/* -cp "evosuite-runtime-1.0.3.jar:evosuite-tests:hamcrest-core-1.3.jar:junit-4.12.jar:"$BUILDPATH
+		#get a list of all the classes and test with junit
+		FIND=$(find "evosuite-tests_"$NAME"_"$i"_"$j -name *est.class) #path
+		REMOVEINITIAL=${FIND//evosuite-tests_"$NAME"_"$i"_"$j"'/'/} #remove the initial
+		REMOVECLASS=${REMOVEINITIAL//.class/} #remove the .class
+		CHANGEDOT=${REMOVECLASS//"/"/.} #turn '/' to '.'
+		SPLITTED=$(echo $CHANGEDOT | tr " " "\n") #split
+		for CLASS in $SPLITTED #run tests
+		do 
+			java -cp "evosuite-tests_Time_"$i"_"$j":evosuite-runtime-1.0.3.jar:junit-4.12.jar:hamcrest-core-1.3.jar:"Time"$i"buggy/build/classes org.junit.runner.JUnitCore $CLASS >> FixedOnBuggy_"$i"_"$j" #on buggy version
+			java -cp "evosuite-tests_Time_"$i"_"$j":evosuite-runtime-1.0.3.jar:junit-4.12.jar:hamcrest-core-1.3.jar:"Time"$i"fixed/build/classes org.junit.runner.JUnitCore $CLASS >> FixedOnBuggy_"$i"_"$j"_Fixed #on fixed version
+		done
+		diff FixedOnBuggy_"$i"_"$j" FixedOnBuggy_"$i"_"$j"_Fixed > diff_"$i"_"$j" #check the actual difference
+		COUNT=$(grep -c "Failure" diff_"$i"_"$j") #Count the number of "Failure". note that it can count a case that it failed in the fixed, but not in the buggy.
+		echo $NAME, $i, $BUGGYCLASS, $BASETIME, $COUNT >> $FILE
+	done
+done
+

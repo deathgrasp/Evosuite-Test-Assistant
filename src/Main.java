@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 public class Main {
     private static int ExtraTime = 0;
     private static int BaseTime = 60;
+	private static int runNumberOfTimes=3
     private static float totalTime = 0;
     private static int checkOneIn = 0;
     private static int testNumber;
@@ -85,7 +86,9 @@ public class Main {
     //for example, if we get the class A.B.C, we will check the package A.B.*
     public static void CompareSingleCheckToPackage(String[] args){
         String name= args[0];
-        if (name.equals("Lang")){
+        //region Lang
+
+        if (name.equals("Lang")){ //run over Lang, going in recursively
             int[] classes=new int[66];
             for (int i=1; i<=65; i++){
                 String[] infoInput=ExecAndExport("defects4j info -p Lang -b "+i).split("---------------------");
@@ -207,7 +210,163 @@ public class Main {
 
 
         }
+        //endregion
+        //region Time
+        if (name.equals("Time")) { //run over time. NOT going in recursively
+            int[] classes = new int[28];
+            for (int i = 1; i <= 27; i++) {
+                String[] infoInput = ExecAndExport("defects4j info -p Time -b " + i).split("---------------------");
+                int modifiedPlace = 0;
+                for (int j = 0; j < infoInput.length; j++) {
+                    if (infoInput[j].contains("List of modified")) {
+                        modifiedPlace = j;
+                        break;
+                    }
+                }
+                String klass = infoInput[modifiedPlace].split("-")[infoInput[modifiedPlace].split("-").length - 1].trim();
+                String pack = klass.substring(0, klass.lastIndexOf('.'));
+                ExecAndExport("\tdefects4j checkout -p Time -v " + i + "\"f\" -w Time" + i + "fixed\n");
+                ExecAndExport("(cd Time" + i + "fixed; ant compile)");
+                String folder = "Time" + i + "fixed/target/classes";
+                if (i > 11) {
+                    folder = "Time" + i + "fixed/build/classes";
+                }
+                int t = 60;
+                for (int j = 0; j < 5; j++) {
+                    File directory = new File(folder+"/"+pack.replace('.','/'));
+                    // get all the files from a directory
+                    File[] fList = directory.listFiles();
+                    int counter=0;
+                    for (File file : fList) {
+                        if (file.isFile() && file.getAbsolutePath().contains(".java") || file.getAbsolutePath().contains(".class")) {
+                        }
+
+                    packInput = ExecAndExport("java -jar evosuite-1.0.3.jar -prefix " + pack + " -projectCP " + folder + "  -Dsearch_budget=" + t + " -Dassertion_timeout=" + t + " -Dextra_timeout=" + t).split("\\*");
+
+                    classes[i] = Integer.parseInt(packInput[modifiedPlace].trim().split(" ")[1].trim());
+                    exec("javac " + pack.replace(".", "/") + "* -cp evosuite-runtime-1.0.3.jar:evosuite-tests:hamcrest-core-1.3.jar:junit-4.12.jar:" + folder);
+                    exec("cp -r evosuite-tests evosuite-tests_Time_" + i + "_" + j + "PACK");
+                    exec("rm -rf evosuite-tests");
+                }
+                if (i == 1 || i == 2 || i == 12) { // two bugs in these versions
+                    modifiedPlace++;
+                    klass = infoInput[modifiedPlace].split("-")[infoInput[modifiedPlace].split("-").length - 1].trim();
+                    pack = klass.substring(0, klass.lastIndexOf('.'));
+                    folder = "Time" + i + "fixed/target/classes";
+                    if (i > 11) {
+                        folder = "Time" + i + "fixed/build/classes";
+                    }
+                    t = 60;
+                    for (int j = 0; j < 5; j++) {
+                        String[] packInput = ExecAndExport("java -jar evosuite-1.0.3.jar -prefix " + pack + " -projectCP " + folder + "  -Dsearch_budget=" + t + " -Dassertion_timeout=" + t + " -Dextra_timeout=" + t).split("\\*");
+                        for (int k = 0; k < packInput.length; k++) {
+                            if (packInput[k].contains("matching classes for prefix")) {
+                                modifiedPlace = k;
+                                break;
+                            }
+                        }
+                        classes[i] = Integer.parseInt(packInput[modifiedPlace].trim().split(" ")[1].trim());
+                        exec("javac " + pack.replace(".", "/") + "* -cp evosuite-runtime-1.0.3.jar:evosuite-tests:hamcrest-core-1.3.jar:junit-4.12.jar:" + folder);
+                        exec("cp -r evosuite-tests evosuite-tests_Time_" + i + "_" + j + "PACK2");
+                        exec("rm -rf evosuite-tests");
+                    }
+                }
+
+            }
+
+            for (int i = 1; i <= 27; i++) {
+
+                String[] infoInput = ExecAndExport("defects4j info -p Time -b " + i).split("---------------------");
+                int modifiedPlace = 0;
+                for (int j = 0; j < infoInput.length; j++) {
+                    if (infoInput[j].contains("List of modified")) {
+                        modifiedPlace = j;
+                        break;
+                    }
+                }
+                String klass = infoInput[modifiedPlace].split("-")[infoInput[modifiedPlace].split("-").length - 1].trim();
+                String pack = klass.substring(0, klass.lastIndexOf('.'));
+                ExecAndExport("\tdefects4j checkout -p Time -v " + i + "\"f\" -w Time" + i + "buggy\n");
+                ExecAndExport("(cd Time" + i + "buggy; ant compile)");
+                String folder = "Time" + i + "buggy/target/classes";
+                if (i > 11) {
+                    folder = "Time" + i + "buggy/build/classes";
+                }
+                int t = 60;
+                for (int j = 0; j < 5; j++) {
+                    String packInput = ExecAndExport("java -cp evosuite-runtime-1.0.3.jar:evosuite-tests_Time_" + i + "_" + j + "PACK" + ":junit-4.12.jar:hamcrest-core-1.3.jar:" + folder + " org.junit.runner.JUnitCore " + pack.replace(".", "/") + "*>> FixedOnBuggy_Time_" + i + "PACK");
+                }
+                String errorsString = exec("grep -c FAILURES\\!\\!\\! FixedOnBuggy_Time_" + i + "PACK").trim();
+                errorsString = errorsString.substring(0, errorsString.length() - 5);
+                int errors = Integer.parseInt(errorsString);
+                exec("echo Time, " + i + ", ???, " + t + ", " + errors + " >> packagebugFile");
+            }
+
+
+            for (int i = 1; i <= 27; i++) {
+                String[] infoInput = ExecAndExport("defects4j info -p Time -b " + i).split("---------------------");
+                int modifiedPlace = 0;
+                for (int j = 0; j < infoInput.length; j++) {
+                    if (infoInput[j].contains("List of modified")) {
+                        modifiedPlace = j;
+                        break;
+                    }
+                }
+                String klass = infoInput[modifiedPlace].split("-")[infoInput[modifiedPlace].split("-").length - 1].trim();
+                String pack = klass.substring(0, klass.lastIndexOf('.'));
+                ExecAndExport("\tdefects4j checkout -p Time -v " + i + "\"f\" -w Time" + i + "fixed\n");
+                ExecAndExport("(cd Time" + i + "fixed; ant compile)");
+                String folder = "Time" + i + "fixed/target/classes";
+                if (i > 11) {
+                    folder = "Time" + i + "fixed/build/classes";
+                }
+                int t = 60 * classes[i];
+                for (int j = 0; j < 5; j++) {
+                    String[] packInput = ExecAndExport("java -jar evosuite-1.0.3.jar -class " + klass + " -projectCP " + folder + "  -Dsearch_budget=" + t + " -Dassertion_timeout=" + t + " -Dextra_timeout=" + t).split("\\*");
+                    for (int k = 0; k < packInput.length; k++) {
+                        if (packInput[k].contains("matching classes for prefix")) {
+                            modifiedPlace = k;
+                            break;
+                        }
+                    }
+                    exec("javac " + pack.replace(".", "/") + "* -cp evosuite-runtime-1.0.3.jar:evosuite-tests:hamcrest-core-1.3.jar:junit-4.12.jar:" + folder);
+                    exec("cp -r evosuite-tests evosuite-tests_Time_" + i + "_" + j);
+                    exec("rm -rf evosuite-tests");
+                }
+
+            }
+
+            for (int i = 1; i <= 27; i++) {
+
+                String[] infoInput = ExecAndExport("defects4j info -p Time -b " + i).split("---------------------");
+                int modifiedPlace = 0;
+                for (int j = 0; j < infoInput.length; j++) {
+                    if (infoInput[j].contains("List of modified")) {
+                        modifiedPlace = j;
+                        break;
+                    }
+                }
+                String klass = infoInput[modifiedPlace].split("-")[infoInput[modifiedPlace].split("-").length - 1].trim();
+                String pack = klass.substring(0, klass.lastIndexOf('.'));
+                ExecAndExport("\tdefects4j checkout -p Time -v " + i + "\"f\" -w Time" + i + "buggy\n");
+                ExecAndExport("(cd Time" + i + "buggy; ant compile)");
+                String folder = "Time" + i + "buggy/target/classes";
+                if (i > 11) {
+                    folder = "Time" + i + "buggy/build/classes";
+                }
+                int t = 60 * classes[i];
+                for (int j = 0; j < 5; j++) {
+                    String packInput = ExecAndExport("java -cp evosuite-runtime-1.0.3.jar:evosuite-tests_Time_" + i + "_" + j + ":junit-4.12.jar:hamcrest-core-1.3.jar:" + folder + " org.junit.runner.JUnitCore " + pack.replace(".", "/") + "*>> FixedOnBuggy_Time_" + i);
+                }
+                String errorsString = exec("grep -c FAILURES\\!\\!\\! FixedOnBuggy_Time_" + i).trim();
+                errorsString = errorsString.substring(0, errorsString.length() - 5);
+                int errors = Integer.parseInt(errorsString);
+                exec("echo Time, " + i + ", " + klass + ", " + t + ", " + errors + " >> packagebugFile");
+            }
+        }
+        //endregion
     }
+	}
     public static String ExecAndExport(String s){
         return exec(("export PATH=$PATH:~/defects4j/framework/bin\n"+s).split("\n"));
     }
@@ -224,7 +383,7 @@ public class Main {
             //createFileTests();
             //countBugs();
             //generateDynamicTimesMath();
-            for (int i = 0; i < 3; i++) { // run 3 tests, each test will include one base run (60/all) and 3 iterations of dynamic on it.
+            for (int i = 0; i < runNumberOfTimes; i++) { // run 3 tests, each test will include one base run (60/all) and 3 iterations of dynamic on it.
                 //grant access to the file with commands to run on evosuite. base case. Optional: change create and run from java instead of a bash script
                 iteration = 0;
                 print("starting");
@@ -241,7 +400,7 @@ public class Main {
                 print("base done");
 
                 gs = "";
-                for (int j = 0; j < 3; j++) {
+                for (int j = 0; j < runNumberOfTimes; j++) {
                     iteration++;
                     generateDynamicTimesMath();
                     print("test " + testNumber + " iteration " + iteration + " completed");

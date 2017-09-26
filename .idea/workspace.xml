@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0a898bd4-5bb6-44ad-8d6e-6877411d0165" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/scripts/runPackageTest" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/scripts/runRangeTest" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Evosuite-Test-Assistant/Main$1.class" afterPath="$PROJECT_DIR$/out/production/Evosuite-Test-Assistant/Main$1.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Evosuite-Test-Assistant/Main$doOnFiles.class" afterPath="$PROJECT_DIR$/out/production/Evosuite-Test-Assistant/Main$doOnFiles.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Evosuite-Test-Assistant/Main.class" afterPath="$PROJECT_DIR$/out/production/Evosuite-Test-Assistant/Main.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/Running Amir's program.txt" afterPath="$PROJECT_DIR$/scripts/Running Amir's program.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Main.java" afterPath="$PROJECT_DIR$/src/Main.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -22,16 +25,17 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
-              <caret line="213" column="44" lean-forward="false" selection-start-line="213" selection-start-column="44" selection-end-line="213" selection-end-column="44" />
+            <state relative-caret-position="23">
+              <caret line="481" column="0" lean-forward="false" selection-start-line="481" selection-start-column="0" selection-end-line="486" selection-end-column="3" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="method#setProject#0;class#Main#0" expanded="false" />
                 <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+                <element signature="method#main#0;class#Main#0" expanded="false" />
                 <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
-                <element signature="method#createDynamicTestEvoRunner#0;class#Main#0" expanded="false" />
                 <element signature="method#countBugs#0;class#Main#0" expanded="false" />
-                <element signature="e#20923#20940#0" expanded="true" />
-                <element signature="e#22614#22631#0" expanded="true" />
+                <element signature="e#30339#30356#0" expanded="true" />
+                <element signature="e#32030#32047#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -42,57 +46,7 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="16252">
               <caret line="1009" column="26" lean-forward="false" selection-start-line="1009" selection-start-column="26" selection-end-line="1009" selection-end-column="26" />
-              <folding>
-                <element signature="e#0#60784#0" expanded="false" />
-                <element signature="e#6101#6102#0" expanded="false" />
-                <element signature="e#6171#6172#0" expanded="false" />
-                <element signature="e#7967#7968#0" expanded="false" />
-                <element signature="e#8013#8014#0" expanded="false" />
-                <element signature="e#9482#9483#0" expanded="false" />
-                <element signature="e#9528#9529#0" expanded="false" />
-                <element signature="e#10902#10903#0" expanded="false" />
-                <element signature="e#10948#10949#0" expanded="false" />
-                <element signature="e#15724#15725#0" expanded="false" />
-                <element signature="e#15779#15780#0" expanded="false" />
-                <element signature="e#32532#32533#0" expanded="false" />
-                <element signature="e#32566#32567#0" expanded="false" />
-                <element signature="e#33488#33489#0" expanded="false" />
-                <element signature="e#33522#33523#0" expanded="false" />
-                <element signature="e#33736#33737#0" expanded="false" />
-                <element signature="e#33771#33772#0" expanded="false" />
-                <element signature="e#33891#33892#0" expanded="false" />
-                <element signature="e#33919#33920#0" expanded="false" />
-                <element signature="e#34168#34169#0" expanded="false" />
-                <element signature="e#34202#34203#0" expanded="false" />
-                <element signature="e#34414#34415#0" expanded="false" />
-                <element signature="e#34449#34450#0" expanded="false" />
-                <element signature="e#34664#34665#0" expanded="false" />
-                <element signature="e#34700#34701#0" expanded="false" />
-                <element signature="e#35161#35162#0" expanded="false" />
-                <element signature="e#35199#35200#0" expanded="false" />
-                <element signature="e#35486#35487#0" expanded="false" />
-                <element signature="e#35532#35533#0" expanded="false" />
-                <element signature="e#35824#35825#0" expanded="false" />
-                <element signature="e#35852#35853#0" expanded="false" />
-                <element signature="e#46394#46395#0" expanded="false" />
-                <element signature="e#46458#46459#0" expanded="false" />
-                <element signature="e#47036#47037#0" expanded="false" />
-                <element signature="e#47092#47093#0" expanded="false" />
-                <element signature="e#47615#47616#0" expanded="false" />
-                <element signature="e#47675#47676#0" expanded="false" />
-                <element signature="e#48444#48445#0" expanded="false" />
-                <element signature="e#48491#48492#0" expanded="false" />
-                <element signature="e#56465#56466#0" expanded="false" />
-                <element signature="e#56523#56524#0" expanded="false" />
-                <element signature="e#57650#57651#0" expanded="false" />
-                <element signature="e#57708#57709#0" expanded="false" />
-                <element signature="e#59796#59797#0" expanded="false" />
-                <element signature="e#59824#59825#0" expanded="false" />
-                <element signature="e#60191#60192#0" expanded="false" />
-                <element signature="e#60228#60229#0" expanded="false" />
-                <element signature="e#60595#60596#0" expanded="false" />
-                <element signature="e#60632#60633#0" expanded="false" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -112,7 +66,11 @@
       <find>evosuite</find>
       <find>integer</find>
       <find>exec</find>
+      <find>Lang</find>
     </findStrings>
+    <replaceStrings>
+      <replace>Time</replace>
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -149,7 +107,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
@@ -179,7 +137,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -456,7 +414,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21262887" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22036083" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="EvoSuite" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -491,12 +449,38 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#setProject#0;class#Main#0" expanded="false" />
             <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+            <element signature="method#main#0;class#Main#0" expanded="false" />
             <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
-            <element signature="method#createDynamicTestEvoRunner#0;class#Main#0" expanded="false" />
             <element signature="method#countBugs#0;class#Main#0" expanded="false" />
-            <element signature="e#20923#20940#0" expanded="true" />
-            <element signature="e#22614#22631#0" expanded="true" />
+            <element signature="e#30339#30356#0" expanded="true" />
+            <element signature="e#32030#32047#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://E:/Program Files/Java/jdk1.8.0_131/src.zip!/java/lang/Integer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="16252">
+          <caret line="1009" column="26" lean-forward="false" selection-start-line="1009" selection-start-column="26" selection-end-line="1009" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#setProject#0;class#Main#0" expanded="false" />
+            <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+            <element signature="method#main#0;class#Main#0" expanded="false" />
+            <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
+            <element signature="method#countBugs#0;class#Main#0" expanded="false" />
+            <element signature="e#30339#30356#0" expanded="true" />
+            <element signature="e#32030#32047#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -505,57 +489,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17153">
           <caret line="1009" column="26" lean-forward="false" selection-start-line="1009" selection-start-column="26" selection-end-line="1009" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#60784#0" expanded="false" />
-            <element signature="e#6101#6102#0" expanded="false" />
-            <element signature="e#6171#6172#0" expanded="false" />
-            <element signature="e#7967#7968#0" expanded="false" />
-            <element signature="e#8013#8014#0" expanded="false" />
-            <element signature="e#9482#9483#0" expanded="false" />
-            <element signature="e#9528#9529#0" expanded="false" />
-            <element signature="e#10902#10903#0" expanded="false" />
-            <element signature="e#10948#10949#0" expanded="false" />
-            <element signature="e#15724#15725#0" expanded="false" />
-            <element signature="e#15779#15780#0" expanded="false" />
-            <element signature="e#32532#32533#0" expanded="false" />
-            <element signature="e#32566#32567#0" expanded="false" />
-            <element signature="e#33488#33489#0" expanded="false" />
-            <element signature="e#33522#33523#0" expanded="false" />
-            <element signature="e#33736#33737#0" expanded="false" />
-            <element signature="e#33771#33772#0" expanded="false" />
-            <element signature="e#33891#33892#0" expanded="false" />
-            <element signature="e#33919#33920#0" expanded="false" />
-            <element signature="e#34168#34169#0" expanded="false" />
-            <element signature="e#34202#34203#0" expanded="false" />
-            <element signature="e#34414#34415#0" expanded="false" />
-            <element signature="e#34449#34450#0" expanded="false" />
-            <element signature="e#34664#34665#0" expanded="false" />
-            <element signature="e#34700#34701#0" expanded="false" />
-            <element signature="e#35161#35162#0" expanded="false" />
-            <element signature="e#35199#35200#0" expanded="false" />
-            <element signature="e#35486#35487#0" expanded="false" />
-            <element signature="e#35532#35533#0" expanded="false" />
-            <element signature="e#35824#35825#0" expanded="false" />
-            <element signature="e#35852#35853#0" expanded="false" />
-            <element signature="e#46394#46395#0" expanded="false" />
-            <element signature="e#46458#46459#0" expanded="false" />
-            <element signature="e#47036#47037#0" expanded="false" />
-            <element signature="e#47092#47093#0" expanded="false" />
-            <element signature="e#47615#47616#0" expanded="false" />
-            <element signature="e#47675#47676#0" expanded="false" />
-            <element signature="e#48444#48445#0" expanded="false" />
-            <element signature="e#48491#48492#0" expanded="false" />
-            <element signature="e#56465#56466#0" expanded="false" />
-            <element signature="e#56523#56524#0" expanded="false" />
-            <element signature="e#57650#57651#0" expanded="false" />
-            <element signature="e#57708#57709#0" expanded="false" />
-            <element signature="e#59796#59797#0" expanded="false" />
-            <element signature="e#59824#59825#0" expanded="false" />
-            <element signature="e#60191#60192#0" expanded="false" />
-            <element signature="e#60228#60229#0" expanded="false" />
-            <element signature="e#60595#60596#0" expanded="false" />
-            <element signature="e#60632#60633#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -565,12 +499,13 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#setProject#0;class#Main#0" expanded="false" />
             <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+            <element signature="method#main#0;class#Main#0" expanded="false" />
             <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
-            <element signature="method#createDynamicTestEvoRunner#0;class#Main#0" expanded="false" />
             <element signature="method#countBugs#0;class#Main#0" expanded="false" />
-            <element signature="e#20923#20940#0" expanded="true" />
-            <element signature="e#22614#22631#0" expanded="true" />
+            <element signature="e#30339#30356#0" expanded="true" />
+            <element signature="e#32030#32047#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -579,56 +514,73 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17153">
           <caret line="1009" column="26" lean-forward="false" selection-start-line="1009" selection-start-column="26" selection-end-line="1009" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#60784#0" expanded="false" />
-            <element signature="e#6101#6102#0" expanded="false" />
-            <element signature="e#6171#6172#0" expanded="false" />
-            <element signature="e#7967#7968#0" expanded="false" />
-            <element signature="e#8013#8014#0" expanded="false" />
-            <element signature="e#9482#9483#0" expanded="false" />
-            <element signature="e#9528#9529#0" expanded="false" />
-            <element signature="e#10902#10903#0" expanded="false" />
-            <element signature="e#10948#10949#0" expanded="false" />
-            <element signature="e#15724#15725#0" expanded="false" />
-            <element signature="e#15779#15780#0" expanded="false" />
-            <element signature="e#32532#32533#0" expanded="false" />
-            <element signature="e#32566#32567#0" expanded="false" />
-            <element signature="e#33488#33489#0" expanded="false" />
-            <element signature="e#33522#33523#0" expanded="false" />
-            <element signature="e#33736#33737#0" expanded="false" />
-            <element signature="e#33771#33772#0" expanded="false" />
-            <element signature="e#33891#33892#0" expanded="false" />
-            <element signature="e#33919#33920#0" expanded="false" />
-            <element signature="e#34168#34169#0" expanded="false" />
-            <element signature="e#34202#34203#0" expanded="false" />
-            <element signature="e#34414#34415#0" expanded="false" />
-            <element signature="e#34449#34450#0" expanded="false" />
-            <element signature="e#34664#34665#0" expanded="false" />
-            <element signature="e#34700#34701#0" expanded="false" />
-            <element signature="e#35161#35162#0" expanded="false" />
-            <element signature="e#35199#35200#0" expanded="false" />
-            <element signature="e#35486#35487#0" expanded="false" />
-            <element signature="e#35532#35533#0" expanded="false" />
-            <element signature="e#35824#35825#0" expanded="false" />
-            <element signature="e#35852#35853#0" expanded="false" />
-            <element signature="e#46394#46395#0" expanded="false" />
-            <element signature="e#46458#46459#0" expanded="false" />
-            <element signature="e#47036#47037#0" expanded="false" />
-            <element signature="e#47092#47093#0" expanded="false" />
-            <element signature="e#47615#47616#0" expanded="false" />
-            <element signature="e#47675#47676#0" expanded="false" />
-            <element signature="e#48444#48445#0" expanded="false" />
-            <element signature="e#48491#48492#0" expanded="false" />
-            <element signature="e#56465#56466#0" expanded="false" />
-            <element signature="e#56523#56524#0" expanded="false" />
-            <element signature="e#57650#57651#0" expanded="false" />
-            <element signature="e#57708#57709#0" expanded="false" />
-            <element signature="e#59796#59797#0" expanded="false" />
-            <element signature="e#59824#59825#0" expanded="false" />
-            <element signature="e#60191#60192#0" expanded="false" />
-            <element signature="e#60228#60229#0" expanded="false" />
-            <element signature="e#60595#60596#0" expanded="false" />
-            <element signature="e#60632#60633#0" expanded="false" />
+            <element signature="imports" expanded="true" />
+            <element signature="method#setProject#0;class#Main#0" expanded="false" />
+            <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+            <element signature="method#main#0;class#Main#0" expanded="false" />
+            <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
+            <element signature="method#countBugs#0;class#Main#0" expanded="false" />
+            <element signature="e#30339#30356#0" expanded="true" />
+            <element signature="e#32030#32047#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://E:/Program Files/Java/jdk1.8.0_131/src.zip!/java/lang/Integer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17153">
+          <caret line="1009" column="26" lean-forward="false" selection-start-line="1009" selection-start-column="26" selection-end-line="1009" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#setProject#0;class#Main#0" expanded="false" />
+            <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+            <element signature="method#main#0;class#Main#0" expanded="false" />
+            <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
+            <element signature="method#countBugs#0;class#Main#0" expanded="false" />
+            <element signature="e#30339#30356#0" expanded="true" />
+            <element signature="e#32030#32047#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://E:/Program Files/Java/jdk1.8.0_131/src.zip!/java/lang/Integer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17153">
+          <caret line="1009" column="26" lean-forward="false" selection-start-line="1009" selection-start-column="26" selection-end-line="1009" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#setProject#0;class#Main#0" expanded="false" />
+            <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+            <element signature="method#main#0;class#Main#0" expanded="false" />
+            <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
+            <element signature="method#countBugs#0;class#Main#0" expanded="false" />
+            <element signature="e#30339#30356#0" expanded="true" />
+            <element signature="e#32030#32047#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -639,12 +591,13 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#setProject#0;class#Main#0" expanded="false" />
             <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+            <element signature="method#main#0;class#Main#0" expanded="false" />
             <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
-            <element signature="method#createDynamicTestEvoRunner#0;class#Main#0" expanded="false" />
             <element signature="method#countBugs#0;class#Main#0" expanded="false" />
-            <element signature="e#20923#20940#0" expanded="true" />
-            <element signature="e#22614#22631#0" expanded="true" />
+            <element signature="e#30339#30356#0" expanded="true" />
+            <element signature="e#32030#32047#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -655,12 +608,13 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#setProject#0;class#Main#0" expanded="false" />
             <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+            <element signature="method#main#0;class#Main#0" expanded="false" />
             <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
-            <element signature="method#createDynamicTestEvoRunner#0;class#Main#0" expanded="false" />
             <element signature="method#countBugs#0;class#Main#0" expanded="false" />
-            <element signature="e#20923#20940#0" expanded="true" />
-            <element signature="e#22614#22631#0" expanded="true" />
+            <element signature="e#30339#30356#0" expanded="true" />
+            <element signature="e#32030#32047#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -671,12 +625,13 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#setProject#0;class#Main#0" expanded="false" />
             <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+            <element signature="method#main#0;class#Main#0" expanded="false" />
             <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
-            <element signature="method#createDynamicTestEvoRunner#0;class#Main#0" expanded="false" />
             <element signature="method#countBugs#0;class#Main#0" expanded="false" />
-            <element signature="e#20923#20940#0" expanded="true" />
-            <element signature="e#22614#22631#0" expanded="true" />
+            <element signature="e#30339#30356#0" expanded="true" />
+            <element signature="e#32030#32047#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -687,12 +642,13 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#setProject#0;class#Main#0" expanded="false" />
             <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+            <element signature="method#main#0;class#Main#0" expanded="false" />
             <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
-            <element signature="method#createDynamicTestEvoRunner#0;class#Main#0" expanded="false" />
             <element signature="method#countBugs#0;class#Main#0" expanded="false" />
-            <element signature="e#20923#20940#0" expanded="true" />
-            <element signature="e#22614#22631#0" expanded="true" />
+            <element signature="e#30339#30356#0" expanded="true" />
+            <element signature="e#32030#32047#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -703,12 +659,13 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#setProject#0;class#Main#0" expanded="false" />
             <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+            <element signature="method#main#0;class#Main#0" expanded="false" />
             <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
-            <element signature="method#createDynamicTestEvoRunner#0;class#Main#0" expanded="false" />
             <element signature="method#countBugs#0;class#Main#0" expanded="false" />
-            <element signature="e#20923#20940#0" expanded="true" />
-            <element signature="e#22614#22631#0" expanded="true" />
+            <element signature="e#30339#30356#0" expanded="true" />
+            <element signature="e#32030#32047#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -719,12 +676,13 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#setProject#0;class#Main#0" expanded="false" />
             <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+            <element signature="method#main#0;class#Main#0" expanded="false" />
             <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
-            <element signature="method#createDynamicTestEvoRunner#0;class#Main#0" expanded="false" />
             <element signature="method#countBugs#0;class#Main#0" expanded="false" />
-            <element signature="e#20923#20940#0" expanded="true" />
-            <element signature="e#22614#22631#0" expanded="true" />
+            <element signature="e#30339#30356#0" expanded="true" />
+            <element signature="e#32030#32047#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -735,28 +693,13 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#setProject#0;class#Main#0" expanded="false" />
             <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+            <element signature="method#main#0;class#Main#0" expanded="false" />
             <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
-            <element signature="method#createDynamicTestEvoRunner#0;class#Main#0" expanded="false" />
             <element signature="method#countBugs#0;class#Main#0" expanded="false" />
-            <element signature="e#20923#20940#0" expanded="true" />
-            <element signature="e#22614#22631#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
-            <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
-            <element signature="method#createDynamicTestEvoRunner#0;class#Main#0" expanded="false" />
-            <element signature="method#countBugs#0;class#Main#0" expanded="false" />
-            <element signature="e#20923#20940#0" expanded="true" />
-            <element signature="e#22614#22631#0" expanded="true" />
+            <element signature="e#30339#30356#0" expanded="true" />
+            <element signature="e#32030#32047#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -773,72 +716,23 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="16252">
           <caret line="1009" column="26" lean-forward="false" selection-start-line="1009" selection-start-column="26" selection-end-line="1009" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#60784#0" expanded="false" />
-            <element signature="e#6101#6102#0" expanded="false" />
-            <element signature="e#6171#6172#0" expanded="false" />
-            <element signature="e#7967#7968#0" expanded="false" />
-            <element signature="e#8013#8014#0" expanded="false" />
-            <element signature="e#9482#9483#0" expanded="false" />
-            <element signature="e#9528#9529#0" expanded="false" />
-            <element signature="e#10902#10903#0" expanded="false" />
-            <element signature="e#10948#10949#0" expanded="false" />
-            <element signature="e#15724#15725#0" expanded="false" />
-            <element signature="e#15779#15780#0" expanded="false" />
-            <element signature="e#32532#32533#0" expanded="false" />
-            <element signature="e#32566#32567#0" expanded="false" />
-            <element signature="e#33488#33489#0" expanded="false" />
-            <element signature="e#33522#33523#0" expanded="false" />
-            <element signature="e#33736#33737#0" expanded="false" />
-            <element signature="e#33771#33772#0" expanded="false" />
-            <element signature="e#33891#33892#0" expanded="false" />
-            <element signature="e#33919#33920#0" expanded="false" />
-            <element signature="e#34168#34169#0" expanded="false" />
-            <element signature="e#34202#34203#0" expanded="false" />
-            <element signature="e#34414#34415#0" expanded="false" />
-            <element signature="e#34449#34450#0" expanded="false" />
-            <element signature="e#34664#34665#0" expanded="false" />
-            <element signature="e#34700#34701#0" expanded="false" />
-            <element signature="e#35161#35162#0" expanded="false" />
-            <element signature="e#35199#35200#0" expanded="false" />
-            <element signature="e#35486#35487#0" expanded="false" />
-            <element signature="e#35532#35533#0" expanded="false" />
-            <element signature="e#35824#35825#0" expanded="false" />
-            <element signature="e#35852#35853#0" expanded="false" />
-            <element signature="e#46394#46395#0" expanded="false" />
-            <element signature="e#46458#46459#0" expanded="false" />
-            <element signature="e#47036#47037#0" expanded="false" />
-            <element signature="e#47092#47093#0" expanded="false" />
-            <element signature="e#47615#47616#0" expanded="false" />
-            <element signature="e#47675#47676#0" expanded="false" />
-            <element signature="e#48444#48445#0" expanded="false" />
-            <element signature="e#48491#48492#0" expanded="false" />
-            <element signature="e#56465#56466#0" expanded="false" />
-            <element signature="e#56523#56524#0" expanded="false" />
-            <element signature="e#57650#57651#0" expanded="false" />
-            <element signature="e#57708#57709#0" expanded="false" />
-            <element signature="e#59796#59797#0" expanded="false" />
-            <element signature="e#59824#59825#0" expanded="false" />
-            <element signature="e#60191#60192#0" expanded="false" />
-            <element signature="e#60228#60229#0" expanded="false" />
-            <element signature="e#60595#60596#0" expanded="false" />
-            <element signature="e#60632#60633#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="213" column="44" lean-forward="false" selection-start-line="213" selection-start-column="44" selection-end-line="213" selection-end-column="44" />
+        <state relative-caret-position="23">
+          <caret line="481" column="0" lean-forward="false" selection-start-line="481" selection-start-column="0" selection-end-line="486" selection-end-column="3" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#setProject#0;class#Main#0" expanded="false" />
             <element signature="method#CompareSingleCheckToPackage#0;class#Main#0" expanded="false" />
+            <element signature="method#main#0;class#Main#0" expanded="false" />
             <element signature="method#generateDynamicTimesMath#0;class#Main#0" expanded="false" />
-            <element signature="method#createDynamicTestEvoRunner#0;class#Main#0" expanded="false" />
             <element signature="method#countBugs#0;class#Main#0" expanded="false" />
-            <element signature="e#20923#20940#0" expanded="true" />
-            <element signature="e#22614#22631#0" expanded="true" />
+            <element signature="e#30339#30356#0" expanded="true" />
+            <element signature="e#32030#32047#0" expanded="true" />
           </folding>
         </state>
       </provider>
