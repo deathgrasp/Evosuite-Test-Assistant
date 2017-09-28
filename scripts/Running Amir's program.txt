@@ -67,4 +67,5 @@ Windows:
 How to install defects4j
 1) download defects4j from https://github.com/rjust/defects4j
 2) make sure you have ant, maven, git, svn installed
+	2.1) requires perl. use "sudo apt-get install libdbi-perl"
 3) follow the "getting started" in git 
