@@ -15,3 +15,5 @@ The scripts are used to run evosuite on a defects4j project, and count the numbe
 This is done by creating tests on the version after the fix, running them on both fixed and pre-fix versions, and counting the bugs that appear only in the pre-fix version. 
 A more detailed per-script functionality is found in them.
 All scripts can be ran without input (./<script name>). In order to run on a remote location, used nohup and & is advised (nohup ./<script name> &)
+should install dos2unix in linux for prediction
+Required files: In scripts, the folder required-files include the jars required to run the scripts. in said class, there is also outputs of amir's program to run the prediction tests. To run the scripts, copy the jars, script and amir's outputs (if running prediction) into the same folder and use the command above.
