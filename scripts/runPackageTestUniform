@@ -11,6 +11,7 @@ NAME=Time
 TESTS=27
 for i in {1..11}
 do
+	#get the buggy class name
 	INFO=$(defects4j info -p $NAME -b $i)
         FILELINE=$(awk 'f {print; exit} /List of modified/ {f=1}' <<<"$INFO")
         BUGGYCLASS=$(echo $FILELINE| cut -d ' ' -f 2) #classname
@@ -18,10 +19,8 @@ do
 	CLASSESPATH=${CP//"."/"/"}
 	defects4j checkout -p $NAME -v $i"f" -w $NAME$i"fixed"/
 
-	echo checkedout
 	(cd $NAME$i"fixed"; ant compile)
 	defects4j checkout -p $NAME -v $i"b" -w $NAME$i"buggy"/
-	echo checkedout
 	(cd $NAME$i"buggy"; ant compile)
 
 	BUILDPATH="$NAME"$i"fixed/target/classes"
@@ -40,7 +39,7 @@ do
 		cp -r evosuite-tests "evosuite-tests_"$NAME"_"$i"_"$j
 		rm -rf evosuite-tests
 		
-		#compile the classes. 
+		#compile the tests. 
 		javac evosuite-tests_"$NAME"_"$i"_"$j"/"$CLASSESPATH"/* -cp "evosuite-runtime-1.0.3.jar:evosuite-tests:hamcrest-core-1.3.jar:junit-4.12.jar:"$BUILDPATH
 		#get a list of all the classes and test with junit
 		A=$(find "evosuite-tests_"$NAME"_"$i"_"$j -name *est.class) #path
